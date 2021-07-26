@@ -69,11 +69,31 @@ router.get("/", async (req, res, next) => {
       }
 
       // set properties for notification count and latest message preview
+      convoJSON.notificationCount = convoJSON.messages.filter((message => message.hasBeenRead === false)).length;
       convoJSON.latestMessageText = convoJSON.messages[0].text;
       conversations[i] = convoJSON;
     }
 
     res.json(conversations);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/", async (req, res, next) => {
+  console.log('--- triggered put /conversations with convoId ', req.body.conversationId);
+  try {
+    if (!req.body.conversationId) {
+      res.sendStatus(401);
+    }
+    const newMsgStatus = { hasBeenRead: true };
+    const filter = {
+      where: {
+        conversationId: req.body.conversationId
+      },
+    };
+    await Message.update(newMsgStatus, filter);
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }

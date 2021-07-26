@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  readConversation,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -117,3 +118,15 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
     console.error(error);
   }
 };
+
+export const updateConvoToRead = (conversationId) => async (dispatch) => {
+  console.log('triggered thunkCreators.updateConvoToRead with conversationId ', conversationId);
+  try {
+    await axios.put('/api/conversations', {
+      conversationId,
+     });
+    dispatch(readConversation(conversationId));
+  } catch (error) {
+    console.error(error);
+  }
+}

@@ -24,7 +24,7 @@ const ChatContent = (props) => {
   const classes = useStyles();
 
   const { conversation } = props;
-  const { latestMessageText, otherUser } = conversation;
+  const { latestMessageText, otherUser, notificationCount } = conversation;
 
   return (
     <Box className={classes.root}>
@@ -35,6 +35,7 @@ const ChatContent = (props) => {
         <Typography className={classes.previewText}>
           {latestMessageText}
         </Typography>
+        {notificationCount}
       </Box>
     </Box>
   );
