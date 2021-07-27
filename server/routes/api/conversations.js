@@ -19,10 +19,9 @@ router.get("/", async (req, res, next) => {
           user2Id: userId,
         },
       },
-      attributes: ["id"],
-      order: [[Message, "createdAt", "DESC"]],
+      attributes: ["id", "createdAt"],
       include: [
-        { model: Message, order: ["createdAt", "DESC"] },
+        { model: Message, order: ["createdAt", "ASC"] },
         {
           model: User,
           as: "user1",
@@ -48,6 +47,10 @@ router.get("/", async (req, res, next) => {
       ],
     });
 
+    conversations.sort((a, b) => {
+      return b.dataValues.createdAt.toJSON().localeCompare(a.dataValues.createdAt.toJSON());
+    })
+    
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
       const convoJSON = convo.toJSON();
