@@ -18,6 +18,15 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  unreadCt: {
+    backgroundImage: "linear-gradient(225deg, #6CC1FF 0%, #3A8DFF 100%)",
+    borderRadius: "10px",
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    letterSpacing: -0.2,
+    padding: 8
+  }
 }));
 
 const ChatContent = (props) => {
@@ -35,8 +44,9 @@ const ChatContent = (props) => {
         <Typography className={classes.previewText}>
           {latestMessageText}
         </Typography>
-        {notificationCount}
       </Box>
+        {notificationCount !== 0 && <Typography className={classes.unreadCt}>{notificationCount}
+        </Typography>}
     </Box>
   );
 };

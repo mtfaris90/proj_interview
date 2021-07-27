@@ -70,6 +70,7 @@ export const addConversation = (recipientId, newMessage) => {
 };
 
 export const readConversation = (conversationId) => {
+  console.log('trigerred conversations.readConversation');
   return {
     type: READ_CONVERSATION,
     conversationId

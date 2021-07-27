@@ -120,13 +120,20 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 };
 
 export const updateConvoToRead = (conversationId) => async (dispatch) => {
-  console.log('triggered thunkCreators.updateConvoToRead with conversationId ', conversationId);
+  console.log(
+    "triggered thunkCreators.updateConvoToRead with conversationId ",
+    conversationId
+  );
   try {
-    await axios.put('/api/conversations', {
+    const { data } = await axios.put("/api/conversations", {
       conversationId,
-     });
+    });
     dispatch(readConversation(conversationId));
+    if (data) {
+      console.log("successfully ran axios put w/ data ", data);
+      socket.emit("convo-read", conversationId);
+    }
   } catch (error) {
     console.error(error);
   }
-}
+};

@@ -6,6 +6,8 @@ import moment from "moment";
 const Messages = (props) => {
   const { messages, otherUser, userId } = props;
 
+  var lastUnread = [...messages].reverse().find((message) => message.hasBeenRead === false);
+  console.log(lastUnread);
   return (
     <Box>
       {messages.map((message, i) => {
