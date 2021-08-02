@@ -1,5 +1,5 @@
 export const addMessageToStore = (state, payload) => {
-  const { message, sender } = payload;
+  const { message, sender, recipientId } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
   if (sender !== null) {
     const newConvo = {
@@ -16,7 +16,9 @@ export const addMessageToStore = (state, payload) => {
       const convoCopy = { ...convo };
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
-
+      if (recipientId !== undefined) {
+        convoCopy.otherUser.notificationCount += 1;
+      }
       return convoCopy;
     } else {
       return convo;
@@ -82,13 +84,18 @@ export const addNewConvoToStore = (state, recipientId, message) => {
   });
 };
 
-export const readConvo = (state, conversationId) => {
-  console.log('triggered reducerFunctions.readConvo');
+export const readConvo = (state, payload) => {
+  const { conversationId, otherUserId } = payload;
   return state.map((convo) => {
     if (convo.id === conversationId) {
       const newConvo = { ...convo };
       newConvo.messages.forEach((message) => {
-        message.hasBeenRead = true;
+        if (message.senderId === otherUserId && message.hasBeenRead === false) {
+          message.hasBeenRead = true;
+          if (otherUserId === newConvo.otherUser.id) {
+            newConvo.otherUser.notificationCount -= 1;
+          }
+        }
       });
       return newConvo;
     } else {

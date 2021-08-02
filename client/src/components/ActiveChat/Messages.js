@@ -5,18 +5,33 @@ import moment from "moment";
 
 const Messages = (props) => {
   const { messages, otherUser, userId } = props;
-
-  var lastUnread = [...messages].reverse().find((message) => message.hasBeenRead === false);
-  console.log(lastUnread);
+  let lastReadIndex;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].senderId === userId && messages[i].hasBeenRead) {
+      lastReadIndex = i;
+      break;
+    }
+  }
   return (
     <Box>
       {messages.map((message, i) => {
         const time = moment(message.createdAt).format("h:mm");
-        
+
         return message.senderId === userId ? (
-          <SenderBubble key={message.id} text={message.text} time={time} />
+          <SenderBubble
+            key={message.id}
+            text={message.text}
+            time={time}
+            otherUser={otherUser}
+            isLastRead={i === lastReadIndex}
+          />
         ) : (
-          <OtherUserBubble key={message.id} text={message.text} time={time} otherUser={otherUser} />
+          <OtherUserBubble
+            key={message.id}
+            text={message.text}
+            time={time}
+            otherUser={otherUser}
+          />
         );
       })}
     </Box>

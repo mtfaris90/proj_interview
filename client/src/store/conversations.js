@@ -4,7 +4,7 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-  readConvo
+  readConvo,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -27,10 +27,10 @@ export const gotConversations = (conversations) => {
   };
 };
 
-export const setNewMessage = (message, sender) => {
+export const setNewMessage = (message, sender, recipientId) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, sender: sender || null },
+    payload: { message, sender: sender || null, recipientId },
   };
 };
 
@@ -69,13 +69,12 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
-export const readConversation = (conversationId) => {
-  console.log('trigerred conversations.readConversation');
+export const readConversation = (conversationId, otherUserId) => {
   return {
     type: READ_CONVERSATION,
-    conversationId
-  }
-}
+    payload: { conversationId, otherUserId },
+  };
+};
 
 // REDUCER
 
@@ -102,7 +101,7 @@ const reducer = (state = [], action) => {
         action.payload.newMessage
       );
     case READ_CONVERSATION:
-      return readConvo(state, action.conversationId);
+      return readConvo(state, action.payload);
     default:
       return state;
   }

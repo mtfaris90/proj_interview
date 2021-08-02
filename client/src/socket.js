@@ -21,12 +21,12 @@ socket.on("connect", () => {
   });
 
   socket.on("new-message", (data) => {
-    store.dispatch(setNewMessage(data.message, data.sender));
+    store.dispatch(setNewMessage(data.message, data.sender, data.recipientId));
   });
 
+  socket.on("convo-read", (data) => {
+    store.dispatch(readConversation(data.conversationId, data.otherUserId));
+  });
 });
 
-socket.on("convo-read", (id) => {
-  store.dispatch(readConversation(id));
-});
 export default socket;
