@@ -11,22 +11,22 @@ const socket = io(window.location.origin);
 
 socket.on("connect", () => {
   console.log("connected to server");
+});
 
-  socket.on("add-online-user", (id) => {
-    store.dispatch(addOnlineUser(id));
-  });
+socket.on("add-online-user", (id) => {
+  store.dispatch(addOnlineUser(id));
+});
 
-  socket.on("remove-offline-user", (id) => {
-    store.dispatch(removeOfflineUser(id));
-  });
+socket.on("remove-offline-user", (id) => {
+  store.dispatch(removeOfflineUser(id));
+});
 
-  socket.on("new-message", (data) => {
-    store.dispatch(setNewMessage(data.message, data.sender, data.recipientId));
-  });
+socket.on("new-message", (data) => {
+  store.dispatch(setNewMessage(data.message, data.sender, data.recipientId));
+});
 
-  socket.on("convo-read", (data) => {
-    store.dispatch(readConversation(data.conversationId, data.otherUserId));
-  });
+socket.on("convo-read", (data) => {
+  store.dispatch(readConversation(data.conversationId, data.otherUserId));
 });
 
 export default socket;
