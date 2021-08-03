@@ -34,7 +34,7 @@ const ChatContent = (props) => {
 
   const { conversation } = props;
   const { latestMessageText, otherUser, id } = conversation;
-  console.log('---', conversation);
+
   return (
     <Box className={classes.root}>
       <Box>
@@ -46,9 +46,11 @@ const ChatContent = (props) => {
         </Typography>
       </Box>
 
-      {id && !!otherUser.notificationCount && <Typography className={classes.unreadCt}>
-        {otherUser.notificationCount}
-      </Typography>}
+      {id && !!otherUser.notificationCount && (
+        <Typography className={classes.unreadCt}>
+          {otherUser.notificationCount}
+        </Typography>
+      )}
     </Box>
   );
 };
