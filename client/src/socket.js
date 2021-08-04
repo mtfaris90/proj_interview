@@ -10,7 +10,7 @@ import {
 const socket = io(window.location.origin);
 
 socket.on("connect", () => {
-  console.log("connected to server");
+  console.log("connected to server w/ id ", socket.id);
 });
 
 socket.on("add-online-user", (id) => {
