@@ -89,11 +89,13 @@ export const readConvo = (state, payload) => {
   return state.map((convo) => {
     if (convo.id === conversationId) {
       const newConvo = { ...convo };
-      newConvo.messages.forEach((message) => {
+      newConvo.messages.forEach((message, i) => {
         if (message.senderId === otherUserId && message.hasBeenRead === false) {
           message.hasBeenRead = true;
           if (otherUserId === newConvo.otherUser.id) {
             newConvo.otherUser.notificationCount -= 1;
+          } else {
+            newConvo.otherUser.lastReadIndex = i;
           }
         }
       });

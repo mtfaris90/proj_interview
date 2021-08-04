@@ -85,6 +85,18 @@ router.get("/", async (req, res, next) => {
         },
         0
       );
+
+      // set lastReadIndex property
+      convoJSON.otherUser.lastReadIndex = 0;
+      for (let i = convoJSON.messages.length - 1; i >= 0; i--) {
+        if (
+          convoJSON.messages[i].senderId === userId &&
+          convoJSON.messages[i].hasBeenRead
+        ) {
+          convoJSON.otherUser.lastReadIndex = i;
+          break;
+        }
+      }
       convoJSON.latestMessageText =
         convoJSON.messages[convoJSON.messages.length - 1].text;
       conversations[i] = convoJSON;

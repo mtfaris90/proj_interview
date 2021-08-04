@@ -5,13 +5,6 @@ import moment from "moment";
 
 const Messages = (props) => {
   const { messages, otherUser, userId } = props;
-  let lastReadIndex;
-  for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i].senderId === userId && messages[i].hasBeenRead) {
-      lastReadIndex = i;
-      break;
-    }
-  }
   return (
     <Box>
       {messages.map((message, i) => {
@@ -23,7 +16,7 @@ const Messages = (props) => {
             text={message.text}
             time={time}
             otherUser={otherUser}
-            isLastRead={i === lastReadIndex}
+            isLastRead={i === otherUser.lastReadIndex}
           />
         ) : (
           <OtherUserBubble
