@@ -120,11 +120,12 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 };
 
 export const updateConvoToRead =
-  (conversationId, otherUserId) => async (dispatch) => {
+  (conversationId, otherUserId, userId) => async (dispatch) => {
     try {
-      const { data } = await axios.put("/api/conversations", {
+      const { data } = await axios.put("/api/conversations/read", {
         conversationId,
         otherUserId,
+        userId
       });
       dispatch(readConversation(conversationId, otherUserId));
       if (data) {

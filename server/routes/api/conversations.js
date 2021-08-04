@@ -96,11 +96,32 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.put("/", async (req, res, next) => {
+router.put("/read", async (req, res, next) => {
   try {
     if (!req.body.conversationId) {
       res.sendStatus(401);
     }
+
+    const userId = req.body.userId;
+
+    const conversation = await Conversation.findAll({
+      where: {
+        id: req.body.conversationId,
+        [Op.or]: {
+          user1Id: req.body.otherUserId,
+          user2Id: req.body.otherUserId,
+        },
+      },
+    });
+
+    if (
+      !conversation ||
+      (conversation[0].dataValues.user1Id !== userId &&
+        conversation[0].dataValues.user2Id !== userId)
+    ) {
+      return res.sendStatus(403);
+    }
+
     const newMsgStatus = { hasBeenRead: true };
     const filter = {
       where: {
@@ -109,7 +130,7 @@ router.put("/", async (req, res, next) => {
       },
     };
     await Message.update(newMsgStatus, filter);
-    res.sendStatus(200);
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
