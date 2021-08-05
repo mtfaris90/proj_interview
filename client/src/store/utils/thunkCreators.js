@@ -123,14 +123,15 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 export const updateConvoToRead =
   (conversationId, otherUserId, userId) => async (dispatch) => {
     try {
-      const { status } = await axios.put("/api/conversations/read", {
+      const { data } = await axios.put("/api/conversations/read", {
         conversationId,
         otherUserId,
         userId,
       });
+      console.log(data);
       dispatch(readConversation(conversationId, otherUserId));
-      if (status === 204) {
-        socket.emit("convo-read", { conversationId, otherUserId });
+      if (data) {
+        socket.emit("convo-read", { conversationId, otherUserId, messages: data });
       }
     } catch (error) {
       console.error(error);

@@ -140,9 +140,10 @@ router.put("/read", async (req, res, next) => {
         conversationId: req.body.conversationId,
         senderId: req.body.otherUserId,
       },
+      returning: true,
     };
-    await Message.update(newMsgStatus, filter);
-    res.sendStatus(204);
+    const data = await Message.update(newMsgStatus, filter);
+    res.send(data[1]);
   } catch (error) {
     next(error);
   }

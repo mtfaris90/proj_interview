@@ -69,10 +69,10 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
-export const readConversation = (conversationId, otherUserId) => {
+export const readConversation = (conversationId, otherUserId, messages) => {
   return {
     type: READ_CONVERSATION,
-    payload: { conversationId, otherUserId },
+    payload: { conversationId, otherUserId, messages },
   };
 };
 

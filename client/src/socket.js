@@ -27,7 +27,7 @@ socket.on("connect", () => {
   });
 
   socket.on("convo-read", (data) => {
-    store.dispatch(readConversation(data.conversationId, data.otherUserId));
+    store.dispatch(readConversation(data.conversationId, data.otherUserId, data.messages));
   });
 });
 
