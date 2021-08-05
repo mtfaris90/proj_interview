@@ -89,6 +89,7 @@ const sendMessage = (data, body) => {
     message: data.message,
     recipientId: body.recipientId,
     sender: data.sender,
+    senderId: body.senderId,
   });
 };
 
@@ -120,15 +121,17 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 };
 
 export const updateConvoToRead =
-  (conversationId, otherUserId) => async (dispatch) => {
+  (conversationId, otherUserId, userId) => async (dispatch) => {
     try {
-      const { data } = await axios.put("/api/conversations", {
+      const { data } = await axios.put("/api/conversations/read", {
         conversationId,
         otherUserId,
+        userId,
       });
+      console.log(data);
       dispatch(readConversation(conversationId, otherUserId));
       if (data) {
-        socket.emit("convo-read", { conversationId, otherUserId });
+        socket.emit("convo-read", { conversationId, otherUserId, messages: data });
       }
     } catch (error) {
       console.error(error);

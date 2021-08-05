@@ -18,7 +18,12 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
-  unreadCt: {
+  boldPreviewText: {
+    fontSize: 12,
+    letterSpacing: -0.17,
+    fontWeight: "bold",
+  },
+  unreadBubble: {
     backgroundImage: "linear-gradient(225deg, #6CC1FF 0%, #3A8DFF 100%)",
     borderRadius: "10px",
     fontSize: 14,
@@ -41,13 +46,19 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography
+          className={
+            id && !!otherUser.notificationCount
+              ? classes.boldPreviewText
+              : classes.previewText
+          }
+        >
           {latestMessageText}
         </Typography>
       </Box>
 
       {id && !!otherUser.notificationCount && (
-        <Typography className={classes.unreadCt}>
+        <Typography className={classes.unreadBubble}>
           {otherUser.notificationCount}
         </Typography>
       )}

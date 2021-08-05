@@ -75,11 +75,28 @@ router.get("/", async (req, res, next) => {
       }
 
       // set properties for notification count and latest message preview
-      convoJSON.otherUser.notificationCount = convoJSON.messages.filter(
-        (message) =>
-          message.hasBeenRead === false &&
-          message.senderId === convoJSON.otherUser.id
-      ).length;
+      convoJSON.otherUser.notificationCount = convoJSON.messages.reduce(
+        (n, message) => {
+          return (
+            n +
+            (message.hasBeenRead === false &&
+              message.senderId === convoJSON.otherUser.id)
+          );
+        },
+        0
+      );
+
+      // set lastReadIndex property
+      convoJSON.otherUser.lastReadIndex = 0;
+      for (let i = convoJSON.messages.length - 1; i >= 0; i--) {
+        if (
+          convoJSON.messages[i].senderId === userId &&
+          convoJSON.messages[i].hasBeenRead
+        ) {
+          convoJSON.otherUser.lastReadIndex = i;
+          break;
+        }
+      }
       convoJSON.latestMessageText =
         convoJSON.messages[convoJSON.messages.length - 1].text;
       conversations[i] = convoJSON;
@@ -91,20 +108,42 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.put("/", async (req, res, next) => {
+router.put("/read", async (req, res, next) => {
   try {
     if (!req.body.conversationId) {
       res.sendStatus(401);
     }
+
+    const userId = req.body.userId;
+
+    const conversation = await Conversation.findAll({
+      where: {
+        id: req.body.conversationId,
+        [Op.or]: {
+          user1Id: req.body.otherUserId,
+          user2Id: req.body.otherUserId,
+        },
+      },
+    });
+
+    if (
+      !conversation ||
+      (conversation[0].dataValues.user1Id !== userId &&
+        conversation[0].dataValues.user2Id !== userId)
+    ) {
+      return res.sendStatus(403);
+    }
+
     const newMsgStatus = { hasBeenRead: true };
     const filter = {
       where: {
         conversationId: req.body.conversationId,
         senderId: req.body.otherUserId,
       },
+      returning: true,
     };
-    await Message.update(newMsgStatus, filter);
-    res.sendStatus(200);
+    const data = await Message.update(newMsgStatus, filter);
+    res.send(data[1]);
   } catch (error) {
     next(error);
   }
