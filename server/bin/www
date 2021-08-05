@@ -45,6 +45,7 @@ io.on("connection", (socket) => {
       message: data.message,
       sender: data.sender,
       recipientId: data.recipientId,
+      senderId: data.senderId,
     });
   });
 

@@ -27,10 +27,10 @@ export const gotConversations = (conversations) => {
   };
 };
 
-export const setNewMessage = (message, sender, recipientId) => {
+export const setNewMessage = (message, sender, recipientId, senderId) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, sender: sender || null, recipientId },
+    payload: { message, sender: sender || null, recipientId, senderId },
   };
 };
 
