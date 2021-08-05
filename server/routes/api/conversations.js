@@ -21,7 +21,7 @@ router.get("/", async (req, res, next) => {
       },
       attributes: ["id", "createdAt"],
       include: [
-        { model: Message, order: ["createdAt", "ASC"] },
+        { model: Message },
         {
           model: User,
           as: "user1",
@@ -45,12 +45,15 @@ router.get("/", async (req, res, next) => {
           required: false,
         },
       ],
+      order: [[Message, "createdAt", "ASC"]],
     });
 
     conversations.sort((a, b) => {
-      return b.dataValues.createdAt.toJSON().localeCompare(a.dataValues.createdAt.toJSON());
-    })
-    
+      return b.dataValues.createdAt
+        .toJSON()
+        .localeCompare(a.dataValues.createdAt.toJSON());
+    });
+
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
       const convoJSON = convo.toJSON();
@@ -72,11 +75,75 @@ router.get("/", async (req, res, next) => {
       }
 
       // set properties for notification count and latest message preview
-      convoJSON.latestMessageText = convoJSON.messages[0].text;
+      convoJSON.otherUser.notificationCount = convoJSON.messages.reduce(
+        (n, message) => {
+          return (
+            n +
+            (message.hasBeenRead === false &&
+              message.senderId === convoJSON.otherUser.id)
+          );
+        },
+        0
+      );
+
+      // set lastReadIndex property
+      convoJSON.otherUser.lastReadIndex = 0;
+      for (let i = convoJSON.messages.length - 1; i >= 0; i--) {
+        if (
+          convoJSON.messages[i].senderId === userId &&
+          convoJSON.messages[i].hasBeenRead
+        ) {
+          convoJSON.otherUser.lastReadIndex = i;
+          break;
+        }
+      }
+      convoJSON.latestMessageText =
+        convoJSON.messages[convoJSON.messages.length - 1].text;
       conversations[i] = convoJSON;
     }
 
     res.json(conversations);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/read", async (req, res, next) => {
+  try {
+    if (!req.body.conversationId) {
+      res.sendStatus(401);
+    }
+
+    const userId = req.body.userId;
+
+    const conversation = await Conversation.findAll({
+      where: {
+        id: req.body.conversationId,
+        [Op.or]: {
+          user1Id: req.body.otherUserId,
+          user2Id: req.body.otherUserId,
+        },
+      },
+    });
+
+    if (
+      !conversation ||
+      (conversation[0].dataValues.user1Id !== userId &&
+        conversation[0].dataValues.user2Id !== userId)
+    ) {
+      return res.sendStatus(403);
+    }
+
+    const newMsgStatus = { hasBeenRead: true };
+    const filter = {
+      where: {
+        conversationId: req.body.conversationId,
+        senderId: req.body.otherUserId,
+      },
+      returning: true,
+    };
+    const data = await Message.update(newMsgStatus, filter);
+    res.send(data[1]);
   } catch (error) {
     next(error);
   }
