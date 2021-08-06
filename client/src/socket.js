@@ -29,7 +29,7 @@ socket.on("message-from-server", (data) => {
 
 socket.on("convo-read-from-server", (data) => {
   store.dispatch(
-    readConversation(data.conversationId, data.otherUserId, data.numberUpdated)
+    readConversation(data.conversationId, data.otherUserId, data.convoLength)
   );
 });
 

@@ -23,7 +23,7 @@ const styles = {
 class Chat extends Component {
   handleClick = async (conversation) => {
     if (conversation.id) {
-      await this.props.readConversation(conversation.id, conversation.otherUser.id, this.props.userId);
+      await this.props.readConversation(conversation.id, conversation.otherUser.id, this.props.userId, this.props.conversation.messages.length);
     }
     await this.props.setActiveChat(conversation.otherUser.username);
   };
@@ -59,8 +59,8 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
-    readConversation: (conversationId, otherUserId, userId) => {
-      dispatch(updateConvoToRead(conversationId, otherUserId, userId));
+    readConversation: (conversationId, otherUserId, userId, convoLength) => {
+      dispatch(updateConvoToRead(conversationId, otherUserId, userId, convoLength));
     }
   };
 };
