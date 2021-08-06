@@ -128,10 +128,13 @@ export const updateConvoToRead =
         otherUserId,
         userId,
       });
-      console.log(data);
-      dispatch(readConversation(conversationId, otherUserId));
-      if (data) {
-        socket.emit("convo-read", { conversationId, otherUserId, messages: data });
+      if (data.length) {
+        dispatch(readConversation(conversationId, otherUserId));
+        socket.emit("convo-read", {
+          conversationId,
+          otherUserId,
+          numberUpdated: data.length,
+        });
       }
     } catch (error) {
       console.error(error);

@@ -53,7 +53,7 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("convo-read-from-server", {
       conversationId: data.conversationId,
       otherUserId: data.otherUserId,
-      messages: data.messages,
+      numberUpdated: data.numberUpdated,
     });
   });
 

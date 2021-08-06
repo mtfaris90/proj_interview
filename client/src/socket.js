@@ -21,15 +21,15 @@ socket.on("remove-offline-user", (id) => {
   store.dispatch(removeOfflineUser(id));
 });
 
-socket.on("new-message", (data) => {
+socket.on("message-from-server", (data) => {
   store.dispatch(
     setNewMessage(data.message, data.sender, data.recipientId, data.senderId)
   );
 });
 
-socket.on("convo-read", (data) => {
+socket.on("convo-read-from-server", (data) => {
   store.dispatch(
-    readConversation(data.conversationId, data.otherUserId, data.messages)
+    readConversation(data.conversationId, data.otherUserId, data.numberUpdated)
   );
 });
 
