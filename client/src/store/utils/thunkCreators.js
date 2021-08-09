@@ -122,7 +122,7 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 };
 
 export const updateConvoToRead =
-  (conversationId, otherUserId, userId, convoLength) => async (dispatch) => {
+  (conversationId, otherUserId, userId, messagesLength) => async (dispatch) => {
     try {
       const { data } = await axios.put("/api/conversations/read", {
         conversationId,
@@ -134,7 +134,7 @@ export const updateConvoToRead =
         socket.emit("convo-read", {
           conversationId,
           otherUserId,
-          convoLength,
+          messagesLength,
         });
       }
     } catch (error) {

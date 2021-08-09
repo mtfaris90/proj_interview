@@ -85,15 +85,15 @@ export const addNewConvoToStore = (state, recipientId, message) => {
 };
 
 export const readConvo = (state, payload) => {
-  const { conversationId, otherUserId, convoLength } = payload;
+  const { conversationId, otherUserId, messagesLength } = payload;
   return state.map((convo) => {
     if (convo.id === conversationId) {
       const newConvo = { ...convo };
       if (otherUserId === newConvo.otherUser.id) {
         newConvo.otherUser.notificationCount = 0;
       } else {
-        console.log("---", convoLength);
-        newConvo.otherUser.lastReadIndex = convoLength - 1;
+        console.log('updated lastReadIndex w/ messages.length of ', messagesLength)
+        newConvo.otherUser.lastReadIndex = messagesLength - 1;
       }
       return newConvo;
     } else {

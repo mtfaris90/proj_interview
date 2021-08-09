@@ -59,8 +59,8 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
-    readConversation: (conversationId, otherUserId, userId, convoLength) => {
-      dispatch(updateConvoToRead(conversationId, otherUserId, userId, convoLength));
+    readConversation: (conversationId, otherUserId, userId, messagesLength) => {
+      dispatch(updateConvoToRead(conversationId, otherUserId, userId, messagesLength));
     }
   };
 };

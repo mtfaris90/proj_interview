@@ -12,18 +12,13 @@ const socket = io(window.location.origin, {
   query: { token },
 });
 
-let user = undefined;
-let conversations = [];
-
 socket.on("connect", () => {
-  const state = store.getState();
-  user = state.user;
-  conversations = state.conversations;
+  console.log("connected to server");
 });
 
 socket.on("connect_error", (err) => {
-  console.log(err.message);
-  console.log(err.data);
+  console.error(err.message);
+  console.error(err.data);
 });
 
 socket.on("add-online-user", (id) => {
@@ -35,30 +30,19 @@ socket.on("remove-offline-user", (id) => {
 });
 
 socket.on("message-from-server", (data) => {
-  console.log(data);
-  // ignore event if message isn't for this user
-  if (user.id !== data.recipientId) {
-    return;
-  }
   store.dispatch(
     setNewMessage(data.message, data.sender, data.recipientId, data.senderId)
   );
 });
 
 socket.on("convo-read-from-server", (data) => {
-  // ignore event if if this user doesn't have the conversation
-  if (!conversations.some((convo) => convo.id === data.conversationId)) {
-    return;
-  }
   store.dispatch(
-    readConversation(data.conversationId, data.otherUserId, data.convoLength)
+    readConversation(data.conversationId, data.otherUserId, data.messagesLength)
   );
 });
 
 socket.on("disconnect", () => {
   console.log("disconnected from server");
-  user = undefined;
-  conversations = [];
 });
 
 export default socket;

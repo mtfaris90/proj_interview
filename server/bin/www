@@ -33,11 +33,6 @@ const io = require("socket.io")(server);
 const jwt = require("jsonwebtoken");
 
 io.use((socket, next) => {
-  // if (socket.handshake.query) {
-  //   console.log(socket.handshake.query.token);
-  // } else {
-  //   console.log("no socket.handshake.query");
-  // }
   if (socket.handshake.query && socket.handshake.query.token) {
     jwt.verify(
       socket.handshake.query.token,
@@ -55,16 +50,14 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("go-online", (id) => {
-    if (!onlineUsers.includes(id)) {
-      onlineUsers.push(id);
-    }
+  socket.on("go-online", (userId) => {
+    onlineUsers[userId] = socket.id;
     // send the user who just went online to everyone else who is already online
-    socket.broadcast.emit("add-online-user", id);
+    socket.broadcast.emit("add-online-user", userId);
   });
 
   socket.on("new-message", (data) => {
-    socket.broadcast.emit("message-from-server", {
+    socket.to(onlineUsers[data.recipientId]).emit("message-from-server", {
       message: data.message,
       sender: data.sender,
       recipientId: data.recipientId,
@@ -73,19 +66,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("convo-read", (data) => {
-    socket.broadcast.emit("convo-read-from-server", {
+    socket.to(onlineUsers[data.otherUserId]).emit("convo-read-from-server", {
       conversationId: data.conversationId,
       otherUserId: data.otherUserId,
-      convoLength: data.convoLength,
+      messagesLength: data.messagesLength,
     });
   });
 
   socket.on("logout", (id) => {
-    if (onlineUsers.includes(id)) {
-      userIndex = onlineUsers.indexOf(id);
-      onlineUsers.splice(userIndex, 1);
+      delete onlineUsers[id];
       socket.broadcast.emit("remove-offline-user", id);
-    }
   });
 });
 
