@@ -7,7 +7,10 @@ import {
   readConversation,
 } from "./store/conversations";
 
-const socket = io(window.location.origin);
+const token = localStorage.getItem("messenger-token");
+const socket = io(window.location.origin, {
+  query: { token },
+});
 
 let user = undefined;
 let conversations = [];
@@ -18,31 +21,21 @@ socket.on("connect", () => {
   conversations = state.conversations;
 });
 
+socket.on("connect_error", (err) => {
+  console.log(err.message);
+  console.log(err.data);
+});
+
 socket.on("add-online-user", (id) => {
-  // ignore event if other user is already online OR there is no convo with other user
-  if (
-    !conversations.some(
-      (convo) => convo.otherUser.id === id && convo.otherUser.online === false
-    )
-  ) {
-    return;
-  }
   store.dispatch(addOnlineUser(id));
 });
 
 socket.on("remove-offline-user", (id) => {
-  // ignore event if other user is already offline OR there is no convo with other user
-  if (
-    !conversations.some(
-      (convo) => convo.otherUser.id === id && convo.otherUser.online === true
-    )
-  ) {
-    return;
-  }
   store.dispatch(removeOfflineUser(id));
 });
 
 socket.on("message-from-server", (data) => {
+  console.log(data);
   // ignore event if message isn't for this user
   if (user.id !== data.recipientId) {
     return;
