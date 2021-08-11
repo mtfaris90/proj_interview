@@ -1,12 +1,12 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { updateConvoToRead } from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
 
-const styles = {
+const useStyles = makeStyles(() => ({
   root: {
     borderRadius: 8,
     height: 80,
@@ -18,15 +18,11 @@ const styles = {
       cursor: "grab",
     },
   },
-};
+}));
 
-const Chat = ({
-  readConversation,
-  setActiveChat,
-  userId,
-  conversation,
-  classes,
-}) => {
+const Chat = ({ readConversation, setActiveChat, userId, conversation }) => {
+  const classes = useStyles();
+
   const handleClick = async (convo) => {
     if (convo.id) {
       await readConversation(convo.id, convo.otherUser.id, userId);
@@ -64,7 +60,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Chat));
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
