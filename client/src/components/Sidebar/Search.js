@@ -24,7 +24,7 @@ const styles = {
   },
 };
 
-const Search = (props) => {
+const Search = ({ handleChange, classes }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
   };
@@ -34,10 +34,10 @@ const Search = (props) => {
       <FormControl fullWidth hiddenLabel>
         <FilledInput
           name="search"
-          onChange={props.handleChange}
+          onChange={handleChange}
           classes={{
-            root: props.classes.filledInput,
-            input: props.classes.input,
+            root: classes.filledInput,
+            input: classes.input,
           }}
           disableUnderline
           placeholder="Search"

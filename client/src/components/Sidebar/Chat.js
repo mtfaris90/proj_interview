@@ -20,34 +20,36 @@ const styles = {
   },
 };
 
-const Chat = (props) => {
-
-  const handleClick = async (conversation) => {
-    if (conversation.id) {
-      await props.readConversation(conversation.id, conversation.otherUser.id, props.userId);
+const Chat = ({
+  readConversation,
+  setActiveChat,
+  userId,
+  conversation,
+  classes,
+}) => {
+  const handleClick = async (convo) => {
+    if (convo.id) {
+      await readConversation(convo.id, convo.otherUser.id, userId);
     }
-    await props.setActiveChat(conversation.otherUser.username);
-  }
+    await setActiveChat(convo.otherUser.username);
+  };
 
   return (
-      <Box
-        onClick={() => handleClick(props.conversation)}
-        className={props.classes.root}
-      >
-        <BadgeAvatar
-          photoUrl={props.conversation.otherUser.photoUrl}
-          username={props.conversation.otherUser.username}
-          online={props.conversation.otherUser.online}
-          sidebar={true}
-        />
-        <ChatContent conversation={props.conversation} />
-      </Box>
-    );;
-}
+    <Box onClick={() => handleClick(conversation)} className={classes.root}>
+      <BadgeAvatar
+        photoUrl={conversation.otherUser.photoUrl}
+        username={conversation.otherUser.username}
+        online={conversation.otherUser.online}
+        sidebar={true}
+      />
+      <ChatContent conversation={conversation} />
+    </Box>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.user.id
+    userId: state.user.id,
   };
 };
 
@@ -58,8 +60,11 @@ const mapDispatchToProps = (dispatch) => {
     },
     readConversation: (conversationId, otherUserId, userId) => {
       dispatch(updateConvoToRead(conversationId, otherUserId, userId));
-    }
+    },
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Chat));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withStyles(styles)(Chat));

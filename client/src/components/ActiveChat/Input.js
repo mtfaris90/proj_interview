@@ -17,27 +17,27 @@ const styles = {
   },
 };
 
-const Input = (props) => {
+const Input = ({ otherUser, conversationId, user, postMessage, classes }) => {
   const [text, setText] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const reqBody = {
       text: text,
-      recipientId: props.otherUser.id,
-      conversationId: props.conversationId,
-      sender: props.conversationId ? null : props.user,
-      senderId: props.user.id,
+      recipientId: otherUser.id,
+      conversationId: conversationId,
+      sender: conversationId ? null : user,
+      senderId: user.id,
     };
-    await props.postMessage(reqBody);
+    await postMessage(reqBody);
     setText("");
   };
 
   return (
-    <form className={props.classes.root} onSubmit={handleSubmit}>
+    <form className={classes.root} onSubmit={handleSubmit}>
       <FormControl fullWidth hiddenLabel>
         <FilledInput
-          classes={{ root: props.classes.input }}
+          classes={{ root: classes.input }}
           disableUnderline
           placeholder="Type something..."
           value={text}
