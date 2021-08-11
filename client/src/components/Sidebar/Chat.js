@@ -4,7 +4,7 @@ import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
 import { updateConvoToRead } from "../../store/utils/thunkCreators";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -20,14 +20,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Chat = ({ readConversation, setActiveChat, userId, conversation }) => {
+const Chat = ({ conversation }) => {
   const classes = useStyles();
+
+  const userId = useSelector((state) => state.user.id);
+  const dispatch = useDispatch();
 
   const handleClick = async (convo) => {
     if (convo.id) {
-      await readConversation(convo.id, convo.otherUser.id, userId);
+      await dispatch(updateConvoToRead(convo.id, convo.otherUser.id, userId));
     }
-    await setActiveChat(convo.otherUser.username);
+    await dispatch(setActiveChat(convo.otherUser.username));
   };
 
   return (
@@ -43,21 +46,4 @@ const Chat = ({ readConversation, setActiveChat, userId, conversation }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    userId: state.user.id,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setActiveChat: (id) => {
-      dispatch(setActiveChat(id));
-    },
-    readConversation: (conversationId, otherUserId, userId) => {
-      dispatch(updateConvoToRead(conversationId, otherUserId, userId));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default Chat;
