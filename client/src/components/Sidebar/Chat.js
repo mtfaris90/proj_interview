@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,32 +20,29 @@ const styles = {
   },
 };
 
-class Chat extends Component {
-  handleClick = async (conversation) => {
-    if (conversation.id) {
-      await this.props.readConversation(conversation.id, conversation.otherUser.id, this.props.userId, this.props.conversation.messages.length);
-    }
-    await this.props.setActiveChat(conversation.otherUser.username);
-  };
+const Chat = (props) => {
 
-  render() {
-    const { classes } = this.props;
-    const otherUser = this.props.conversation.otherUser;
-    return (
+  const handleClick = async (conversation) => {
+    if (conversation.id) {
+      await props.readConversation(conversation.id, conversation.otherUser.id, props.userId);
+    }
+    await props.setActiveChat(conversation.otherUser.username);
+  }
+
+  return (
       <Box
-        onClick={() => this.handleClick(this.props.conversation)}
-        className={classes.root}
+        onClick={() => handleClick(props.conversation)}
+        className={props.classes.root}
       >
         <BadgeAvatar
-          photoUrl={otherUser.photoUrl}
-          username={otherUser.username}
-          online={otherUser.online}
+          photoUrl={props.conversation.otherUser.photoUrl}
+          username={props.conversation.otherUser.username}
+          online={props.conversation.otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} />
+        <ChatContent conversation={props.conversation} />
       </Box>
-    );
-  }
+    );;
 }
 
 const mapStateToProps = (state) => {
@@ -59,8 +56,8 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
-    readConversation: (conversationId, otherUserId, userId, messagesLength) => {
-      dispatch(updateConvoToRead(conversationId, otherUserId, userId, messagesLength));
+    readConversation: (conversationId, otherUserId, userId) => {
+      dispatch(updateConvoToRead(conversationId, otherUserId, userId));
     }
   };
 };
