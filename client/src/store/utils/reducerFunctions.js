@@ -92,7 +92,6 @@ export const readConvo = (state, payload) => {
       if (otherUserId === newConvo.otherUser.id) {
         newConvo.otherUser.notificationCount = 0;
       } else {
-        console.log('updated lastReadIndex w/ messages.length of ', messagesLength)
         newConvo.otherUser.lastReadIndex = messagesLength - 1;
       }
       return newConvo;

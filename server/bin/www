@@ -57,25 +57,29 @@ io.on("connection", (socket) => {
   });
 
   socket.on("new-message", (data) => {
-    socket.to(onlineUsers[data.recipientId]).emit("message-from-server", {
-      message: data.message,
-      sender: data.sender,
-      recipientId: data.recipientId,
-      senderId: data.senderId,
-    });
+    if (onlineUsers[data.otherUserId]) {
+      socket.to(onlineUsers[data.recipientId]).emit("message-from-server", {
+        message: data.message,
+        sender: data.sender,
+        recipientId: data.recipientId,
+        senderId: data.senderId,
+      });
+    }
   });
 
   socket.on("convo-read", (data) => {
-    socket.to(onlineUsers[data.otherUserId]).emit("convo-read-from-server", {
-      conversationId: data.conversationId,
-      otherUserId: data.otherUserId,
-      messagesLength: data.messagesLength,
-    });
+    if (onlineUsers[data.otherUserId]) {
+      socket.to(onlineUsers[data.otherUserId]).emit("convo-read-from-server", {
+        conversationId: data.conversationId,
+        otherUserId: data.otherUserId,
+        messagesLength: data.messagesLength,
+      });
+    }
   });
 
   socket.on("logout", (id) => {
-      delete onlineUsers[id];
-      socket.broadcast.emit("remove-offline-user", id);
+    delete onlineUsers[id];
+    socket.broadcast.emit("remove-offline-user", id);
   });
 });
 
