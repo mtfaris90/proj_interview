@@ -105,6 +105,7 @@ export const postMessage = (body) => async (dispatch) => {
       dispatch(setNewMessage(data.message));
     }
 
+    
     sendMessage(data, body);
   } catch (error) {
     console.error(error);
@@ -121,17 +122,20 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
 };
 
 export const updateConvoToRead =
-  (conversationId, otherUserId, userId) => async (dispatch) => {
+  (conversationId, otherUserId, userId, messagesLength) => async (dispatch) => {
     try {
       const { data } = await axios.put("/api/conversations/read", {
         conversationId,
         otherUserId,
         userId,
       });
-      console.log(data);
-      dispatch(readConversation(conversationId, otherUserId));
-      if (data) {
-        socket.emit("convo-read", { conversationId, otherUserId, messages: data });
+      if (data.length) {
+        dispatch(readConversation(conversationId, otherUserId));
+        socket.emit("convo-read", {
+          conversationId,
+          otherUserId,
+          messagesLength,
+        });
       }
     } catch (error) {
       console.error(error);

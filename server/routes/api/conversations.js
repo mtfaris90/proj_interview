@@ -68,7 +68,7 @@ router.get("/", async (req, res, next) => {
       }
 
       // set property for online status of the other user
-      if (onlineUsers.includes(convoJSON.otherUser.id)) {
+      if (onlineUsers[convoJSON.otherUser.id]) {
         convoJSON.otherUser.online = true;
       } else {
         convoJSON.otherUser.online = false;
@@ -135,15 +135,19 @@ router.put("/read", async (req, res, next) => {
     }
 
     const newMsgStatus = { hasBeenRead: true };
+
     const filter = {
       where: {
         conversationId: req.body.conversationId,
         senderId: req.body.otherUserId,
+        hasBeenRead: false,
       },
       returning: true,
     };
-    const data = await Message.update(newMsgStatus, filter);
-    res.send(data[1]);
+
+    const [unused, data] = await Message.update(newMsgStatus, filter);
+
+    res.send(data);
   } catch (error) {
     next(error);
   }
